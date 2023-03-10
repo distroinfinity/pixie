@@ -27,7 +27,7 @@ contract Pixie {
         _;
     }
     modifier userExists() {
-        require(!addressToUser[msg.sender].exists, "User Does not exist");
+        require(addressToUser[msg.sender].exists, "User Does not exist");
         _;
     }
     address payable public owner;
@@ -53,15 +53,26 @@ contract Pixie {
         addressToUser[msg.sender].myFiles.push(id);
     }
 
-    // getter setter
-    // get file
-    function getFile(uint256 _id) public view returns (File memory) {
-        return idToFile[_id];
+    function createUser() public returns (User memory) {
+        //check if user already exists
+        require(!addressToUser[msg.sender].exists, "User Already exist");
+
+        User memory tempUser;
+        tempUser.name = "testUser";
+        tempUser.exists = true;
+        addressToUser[msg.sender] = tempUser;
+        return tempUser;
     }
 
+    // getter setter
     //get user
     function getUser(address _user) public view returns (User memory) {
         return addressToUser[_user];
+    }
+
+    // get file
+    function getFile(uint256 _id) public view returns (File memory) {
+        return idToFile[_id];
     }
 
     // get visibility of a file
