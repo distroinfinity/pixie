@@ -44,16 +44,18 @@ contract Pixie {
     }
 
     // utility functions
-    function createFile() public userExists {
+    function createFile() public userExists returns (uint256) {
         uint256 id = fileId.current();
         fileId.increment();
         File memory tempFile = File(id, msg.sender, "abc", Access.Private);
         console.log("file created", id);
         idToFile[id] = tempFile;
         addressToUser[msg.sender].myFiles.push(id);
+        console.log("new item id ", id);
+        return id;
     }
 
-    function createUser() public returns (User memory) {
+    function createUser() public {
         //check if user already exists
         require(!addressToUser[msg.sender].exists, "User Already exist");
 
@@ -61,7 +63,6 @@ contract Pixie {
         tempUser.name = "testUser";
         tempUser.exists = true;
         addressToUser[msg.sender] = tempUser;
-        return tempUser;
     }
 
     // getter setter
@@ -71,8 +72,13 @@ contract Pixie {
     }
 
     // get file
-    function getFile(uint256 _id) public view returns (File memory) {
-        return idToFile[_id];
+    function getFiles() public view userExists returns (File[] memory) {
+        address user = msg.sender;
+        File[] memory myFiles = new File[](addressToUser[user].myFiles.length);
+        for (uint256 i = 0; i < addressToUser[user].myFiles.length; i++) {
+            myFiles[i] = idToFile[addressToUser[user].myFiles[i]];
+        }
+        return myFiles;
     }
 
     // get visibility of a file

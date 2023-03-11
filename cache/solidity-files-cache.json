@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/distro/Documents/ethIndia/pixie/contracts/Pixie.sol": {
-      "lastModificationDate": 1678456056884,
-      "contentHash": "b77fd30e4f81a69ad17558aca1538457",
+      "lastModificationDate": 1678558177120,
+      "contentHash": "13bd1ced47693457e7adf5fe01a86f2a",
       "sourceName": "contracts/Pixie.sol",
       "solcConfig": {
         "version": "0.8.9",
