@@ -44,10 +44,10 @@ contract Pixie {
     }
 
     // utility functions
-    function createFile() public userExists returns (uint256) {
+    function createFile(string memory cid) public userExists returns (uint256) {
         uint256 id = fileId.current();
         fileId.increment();
-        File memory tempFile = File(id, msg.sender, "abc", Access.Private);
+        File memory tempFile = File(id, msg.sender, cid, Access.Private);
         console.log("file created", id);
         idToFile[id] = tempFile;
         addressToUser[msg.sender].myFiles.push(id);

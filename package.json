@@ -21,13 +21,15 @@
     "ethers": "^5.7.2",
     "hardhat": "^2.13.0",
     "ipfs-http-client": "^60.0.0",
+    "minimist": "^1.2.5",
+    "moralis-v1": "^1.11.0",
     "next": "13.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "web3modal": "^1.9.12",
-    "web3uikit": "^1.0.4",
     "react-moralis": "^1.4.2",
-    "moralis-v1": "^1.11.0"
+    "web3.storage": "^4.5.4",
+    "web3modal": "^1.9.12",
+    "web3uikit": "^1.0.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",

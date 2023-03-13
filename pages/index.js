@@ -2,7 +2,7 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { ConnectButton, Button } from "web3uikit";
 import { ethers } from "ethers";
-
+import { uploadToIPFS } from "./utils/web3helper";
 import { PixieAddress } from "./../config";
 import Pixie from "./../artifacts/contracts/Pixie.sol/Pixie.json";
 
@@ -59,7 +59,8 @@ export default function Home() {
     const pixie = pixieContract.connect(signer);
 
     try {
-      let createFile = await pixie.createFile();
+      let cid = uploadToIPFS();
+      let createFile = await pixie.createFile(cid);
       console.log("File created ", createFile);
     } catch (error) {
       console.log("error while creating User ", error);
@@ -108,6 +109,7 @@ export default function Home() {
           <div>
             <Button onClick={createFile} text="Create File" />
             <Button onClick={getMyFiles} text="Get MY File" />
+            {/* <Button onClick={uploadToIPFS} text="Upload dummy Files to ipfs" /> */}
           </div>
         </div>
       </main>
