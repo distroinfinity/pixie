@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -12,8 +13,18 @@ import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Web3Storage } from "web3.storage";
+import CryptoJS from "crypto-js";
+import axios from "axios";
+
+import { ethers } from "ethers";
+import lighthouse from "@lighthouse-web3/sdk";
+import { LockOpen } from "@mui/icons-material";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -26,29 +37,76 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
+function getAccessToken() {
+  return process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN;
+}
+
+async function makeStorageClient() {
+  let apiToken = getAccessToken();
+  //   console.log("API TOKEN", apiToken);
+  if (!apiToken) {
+    throw Error("arror reading api token from env");
+  }
+  return new Web3Storage({ token: apiToken });
+}
+
 export default function FileCard({ data }) {
-  console.log("individual prop data", typeof data, data);
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [fileURL, setFileURL] = React.useState(null);
 
-  async function retrieveFiles(cid) {
-    const client = makeStorageClient();
-    const res = await client.get(cid);
-    console.log(`Got a response! [${res.status}] ${res.statusText}`);
-    if (!res.ok) {
-      throw new Error(
-        `failed to get ${cid} - [${res.status}] ${res.statusText}`
-      );
-    }
+  const sign_auth_message = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const publicKey = (await signer.getAddress()).toLowerCase();
+    const messageRequested = (await lighthouse.getAuthMessage(publicKey)).data
+      .message;
+    const signedMessage = await signer.signMessage(messageRequested);
+    return { publicKey: publicKey, signedMessage: signedMessage };
+  };
 
-    // unpack File objects from the response
-    const files = await res.files();
-    for (const file of files) {
-      console.log(`${file.cid} -- ${file.path} -- ${file.size}`);
-    }
-  }
-  function encryptData() {
-    retrieveFiles(data.CardContent);
-  }
+  /* Decrypt file */
+  const decrypt = async (cid) => {
+    // Fetch file encryption key
+    const { publicKey, signedMessage } = await sign_auth_message();
+    console.log(signedMessage);
+    /*
+      fetchEncryptionKey(cid, publicKey, signedMessage)
+        Parameters:
+          CID: CID of the file to decrypt
+          publicKey: public key of the user who has access to file or owner
+          signedMessage: message signed by the owner of publicKey
+    */
+    const keyObject = await lighthouse.fetchEncryptionKey(
+      cid,
+      publicKey,
+      signedMessage
+    );
+
+    // Decrypt file
+    /*
+      decryptFile(cid, key, mimeType)
+        Parameters:
+          CID: CID of the file to decrypt
+          key: the key to decrypt the file
+          mimeType: default null, mime type of file
+    */
+
+    const fileType = "image/jpeg";
+    const decrypted = await lighthouse.decryptFile(
+      cid,
+      keyObject.data.key,
+      fileType
+    );
+    console.log(decrypted);
+    /*
+      Response: blob
+    */
+
+    // View File
+    const url = URL.createObjectURL(decrypted);
+    console.log("file url", url);
+    setFileURL(url);
+  };
 
   return (
     <Card sx={{ maxWidth: 300 }}>
@@ -69,21 +127,28 @@ export default function FileCard({ data }) {
       <CardMedia
         component="img"
         height="194"
-        image="/images/imgPlaceholder.png"
+        image={fileURL ? fileURL : "/images/imgPlaceholder.png"}
         alt="Paella dish"
       />
+
       <CardContent>
         {/* <Typography variant="body2" color="text.secondary">
           Enter A description if you want
         </Typography> */}
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton
+          onClick={() => {
+            decrypt(data.content);
+          }}
+          aria-label="add to favorites"
+        >
+          {/* <FavoriteIcon /> */}
+          {fileURL ? <LockOpenIcon /> : <LockIcon />}
         </IconButton>
-        <IconButton aria-label="share">
+        {/* <IconButton aria-label="share">
           <ShareIcon />
-        </IconButton>
+        </IconButton> */}
       </CardActions>
     </Card>
   );
