@@ -34,7 +34,7 @@ export const MyFiles = () => {
   return (
     <>
       {myFiles ? (
-        <div>
+        <div style={{ display: "flex" }}>
           {myFiles?.map((file, index) => (
             <div key={index}>
               <FileCard data={file}></FileCard>

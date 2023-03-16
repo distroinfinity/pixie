@@ -11,20 +11,15 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-
+import { Share } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Web3Storage } from "web3.storage";
-import CryptoJS from "crypto-js";
-import axios from "axios";
+import ShareModal from "./shareModal";
 
 import { ethers } from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
-import { LockOpen } from "@mui/icons-material";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -37,22 +32,10 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-function getAccessToken() {
-  return process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN;
-}
-
-async function makeStorageClient() {
-  let apiToken = getAccessToken();
-  //   console.log("API TOKEN", apiToken);
-  if (!apiToken) {
-    throw Error("arror reading api token from env");
-  }
-  return new Web3Storage({ token: apiToken });
-}
-
 export default function FileCard({ data }) {
   const [expanded, setExpanded] = useState(false);
   const [fileURL, setFileURL] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
 
   const sign_auth_message = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -109,47 +92,55 @@ export default function FileCard({ data }) {
   };
 
   return (
-    <Card sx={{ maxWidth: 300 }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title="File Name"
-        subheader="Date"
-      />
-      <CardMedia
-        component="img"
-        height="194"
-        image={fileURL ? fileURL : "/images/imgPlaceholder.png"}
-        alt="Paella dish"
-      />
+    <>
+      <ShareModal open={open} setOpen={setOpen} cid={data.content} />
+      <Card sx={{ maxWidth: 300 }}>
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+              R
+            </Avatar>
+          }
+          action={
+            <IconButton aria-label="settings">
+              <MoreVertIcon />
+            </IconButton>
+          }
+          title="File Name"
+          subheader="Date"
+        />
+        <CardMedia
+          component="img"
+          height="194"
+          image={fileURL ? fileURL : "/images/imgPlaceholder.png"}
+          alt="Paella dish"
+        />
 
-      <CardContent>
-        {/* <Typography variant="body2" color="text.secondary">
+        <CardContent>
+          {/* <Typography variant="body2" color="text.secondary">
           Enter A description if you want
         </Typography> */}
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton
-          onClick={() => {
-            decrypt(data.content);
-          }}
-          aria-label="add to favorites"
-        >
-          {/* <FavoriteIcon /> */}
-          {fileURL ? <LockOpenIcon /> : <LockIcon />}
-        </IconButton>
-        {/* <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton> */}
-      </CardActions>
-    </Card>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton
+            onClick={() => {
+              decrypt(data.content);
+            }}
+            aria-label="add to favorites"
+          >
+            {/* <FavoriteIcon /> */}
+            {fileURL ? <LockOpenIcon /> : <LockIcon />}
+          </IconButton>
+          <IconButton
+            aria-label="share"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <Share />
+          </IconButton>
+        </CardActions>
+      </Card>
+    </>
   );
 }

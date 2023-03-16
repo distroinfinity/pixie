@@ -8,7 +8,13 @@ import Header from "../public/components/header";
 import BasicTabs from "../public/components/mainTabs";
 
 export default function Home() {
-  async function createFile(cid) {
+  async function createFile(file) {
+    console.log("uploaded file data2", file);
+
+    if (!file.Hash) {
+      console.log("CID not found");
+      return;
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     // const provider = new ethers.providers.JsonRpcProvider();
 
@@ -23,7 +29,7 @@ export default function Home() {
     try {
       // let cid = await uploadToIPFS(file);
       // let cid = "QmZFVBso6HAcJ5pD5CVRizpLuoQQcJQxER9gw3duWeHMoy";
-      let createFile = await pixie.createFile(cid);
+      let createFile = await pixie.createFile(file.Hash);
       console.log("File created ", createFile);
     } catch (error) {
       console.log("error while creating file ", error);
@@ -51,7 +57,7 @@ export default function Home() {
     console.log(e);
     // return;
     const sig = await encryptionSignature();
-    let cid;
+    let file;
     try {
       const response = await lighthouse.uploadEncrypted(
         e,
@@ -69,13 +75,13 @@ export default function Home() {
         }
       Note: Hash in response is CID.
     */
-      console.log("CID", response.Hash);
-      cid = response.Hash;
+      console.log("uploaded file data1", response.data);
+      file = response.data;
     } catch (error) {
       console.log("error while uploading to lighthouse");
       return;
     }
-    await createFile(cid);
+    await createFile(file);
   };
 
   return (
