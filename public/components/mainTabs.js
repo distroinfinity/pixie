@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import UserSettings from "./userSettings";
 import { MyFiles } from "./myFiles";
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -63,7 +64,7 @@ export default function BasicTabs() {
         <MyFiles />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Shared Files
+        <MyFiles sharedFiles={true} />
       </TabPanel>
       <TabPanel value={value} index={2}>
         <UserSettings />

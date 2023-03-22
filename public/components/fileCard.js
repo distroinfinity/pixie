@@ -37,7 +37,7 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function FileCard({ fileid }) {
+export default function FileCard({ fileid, sharedFiles }) {
   const [expanded, setExpanded] = useState(false);
   const [fileURL, setFileURL] = useState(null);
   const [open, setOpen] = useState(false);
@@ -152,14 +152,18 @@ export default function FileCard({ fileid }) {
             {/* <FavoriteIcon /> */}
             {fileURL ? <LockOpenIcon /> : <LockIcon />}
           </IconButton>
-          <IconButton
-            aria-label="share"
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            <Share />
-          </IconButton>
+          {!sharedFiles ? (
+            <IconButton
+              aria-label="share"
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              <Share />
+            </IconButton>
+          ) : (
+            ""
+          )}
         </CardActions>
       </Card>
     </>
