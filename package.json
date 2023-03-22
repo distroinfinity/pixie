@@ -38,7 +38,11 @@
     "styled-components": "^5.3.9",
     "web3.storage": "^4.5.4",
     "web3modal": "^1.9.12",
-    "web3uikit": "^1.0.4"
+    "web3uikit": "^1.0.4",
+    "@polybase/auth": "^0.3.32",
+    "@polybase/client": "^0.3.32",
+    "@polybase/eth": "^0.3.32",
+    "@polybase/react": "^0.3.32"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",

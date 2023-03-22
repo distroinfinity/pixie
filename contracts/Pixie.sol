@@ -8,15 +8,15 @@ import "./PixieEnums.sol";
 
 contract Pixie {
     struct User {
-        string name;
+        // string name;
         bool exists;
         uint256[] myFiles;
     }
     struct File {
         uint256 id;
         address owner;
-        string content;
-        Access access;
+        // string content;
+        // Access access;
     }
 
     modifier onlyAuthor(uint256 _id) {
@@ -44,32 +44,33 @@ contract Pixie {
     }
 
     // utility functions
-    function createFile(string memory cid) public userExists returns (uint256) {
+    function createFile() public {
         uint256 id = fileId.current();
         fileId.increment();
-        File memory tempFile = File(id, msg.sender, cid, Access.Private);
-        console.log("file created", id);
+        File memory tempFile = File(id, msg.sender);
+
         idToFile[id] = tempFile;
         addressToUser[msg.sender].myFiles.push(id);
+
         console.log("new item id ", id);
-        return id;
+        // return id;
     }
 
-    function createUser() public {
-        //check if user already exists
-        require(!addressToUser[msg.sender].exists, "User Already exist");
+    // function createUser() public {
+    //     //check if user already exists
+    //     require(!addressToUser[msg.sender].exists, "User Already exist");
 
-        User memory tempUser;
-        tempUser.name = "testUser";
-        tempUser.exists = true;
-        addressToUser[msg.sender] = tempUser;
-    }
+    //     User memory tempUser;
+    //     // tempUser.name = "testUser";
+    //     tempUser.exists = true;
+    //     addressToUser[msg.sender] = tempUser;
+    // }
 
     // getter setter
     //get user
-    function getUser(address _user) public view returns (User memory) {
-        return addressToUser[_user];
-    }
+    // function getUser(address _user) public view returns (User memory) {
+    //     return addressToUser[_user];
+    // }
 
     // get file
     function getFiles() public view userExists returns (File[] memory) {
@@ -82,12 +83,16 @@ contract Pixie {
     }
 
     // get visibility of a file
-    function checkAccess(uint256 _id) public view returns (Access) {
-        return idToFile[_id].access;
-    }
+    // function checkAccess(uint256 _id) public view returns (Access) {
+    //     return idToFile[_id].access;
+    // }
 
     // change access of a file
-    function changeAccess(uint256 _id, Access _access) public onlyAuthor(_id) {
-        idToFile[_id].access = _access;
+    // function changeAccess(uint256 _id, Access _access) public onlyAuthor(_id) {
+    //     idToFile[_id].access = _access;
+    // }
+
+    function getCurrentFileId() public view returns (uint256) {
+        return fileId.current();
     }
 }

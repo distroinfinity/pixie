@@ -33,6 +33,7 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function FileCard({ data }) {
+  // console.log("datataaa", data);
   const [expanded, setExpanded] = useState(false);
   const [fileURL, setFileURL] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -51,7 +52,7 @@ export default function FileCard({ data }) {
   const decrypt = async (cid) => {
     // Fetch file encryption key
     const { publicKey, signedMessage } = await sign_auth_message();
-    console.log(signedMessage);
+    console.log(publicKey, signedMessage);
     /*
       fetchEncryptionKey(cid, publicKey, signedMessage)
         Parameters:
@@ -93,7 +94,7 @@ export default function FileCard({ data }) {
 
   return (
     <>
-      <ShareModal open={open} setOpen={setOpen} cid={data.content} />
+      <ShareModal open={open} setOpen={setOpen} cid={data.cid} />
       <Card sx={{ maxWidth: 300 }}>
         <CardHeader
           avatar={
@@ -124,7 +125,7 @@ export default function FileCard({ data }) {
         <CardActions disableSpacing>
           <IconButton
             onClick={() => {
-              decrypt(data.content);
+              decrypt(data.cid);
             }}
             aria-label="add to favorites"
           >

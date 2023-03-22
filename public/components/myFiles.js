@@ -2,30 +2,36 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { PixieAddress } from "./../../config";
 import Pixie from "./../../artifacts/contracts/Pixie.sol/Pixie.json";
-
+import lighthouse, { upload } from "@lighthouse-web3/sdk";
 import FileCard from "./fileCard";
+import { Polybase } from "@polybase/client";
+import { useCollection } from "@polybase/react";
 
+const db = new Polybase({
+  defaultNamespace:
+    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
+});
 export const MyFiles = () => {
-  const [myFiles, setMyFiles] = useState(null);
+  const [myFiles, setMyFiles] = useState([]);
+
   async function getMyFiles() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     // const provider = new ethers.providers.JsonRpcProvider();
     const signer = provider.getSigner();
-    const pixieContract = new ethers.Contract(
-      PixieAddress,
-      Pixie.abi,
-      provider
-    );
-    const pixie = pixieContract.connect(signer);
-    let getFiles;
+    const address = await signer.getAddress();
+    // console.log(address);
+    // const uploadsRes = await lighthouse.getUploads(address);
+
+    // console.log(uploadsRes.data.uploads);
+    let user;
     try {
-      getFiles = await pixie.getFiles();
-      console.log("Files fetched ", getFiles);
-      setMyFiles(getFiles);
+      user = await db.collection("User").record(address).get();
     } catch (error) {
-      console.log("error while fetching Files ", error);
+      console.log("User does not exist, please sign up", error);
       return;
     }
+    console.log("useer data", user);
+    // setMyFiles(uploadsRes.data.uploads);
   }
   useEffect(() => {
     getMyFiles();
@@ -33,7 +39,7 @@ export const MyFiles = () => {
 
   return (
     <>
-      {myFiles ? (
+      {myFiles.length > 0 ? (
         <div style={{ display: "flex" }}>
           {myFiles?.map((file, index) => (
             <div key={index}>

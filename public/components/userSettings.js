@@ -22,7 +22,11 @@ const UserSettings = () => {
       console.log("User created ", createUser);
     } catch (error) {
       console.log("error while creating User", error);
+      return
     }
+
+    // add to polybase
+    
   }
   async function getUser() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
