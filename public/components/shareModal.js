@@ -7,6 +7,12 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import lighthouse from "@lighthouse-web3/sdk";
 import { ethers } from "ethers";
+import { Polybase } from "@polybase/client";
+
+const db = new Polybase({
+  defaultNamespace:
+    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
+});
 
 const style = {
   position: "absolute",
@@ -20,7 +26,7 @@ const style = {
   p: 4,
 };
 
-export default function ShareModal({ open, setOpen, cid }) {
+export default function ShareModal({ open, setOpen, cid, fileid }) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [address, setAddress] = useState(null);
@@ -37,7 +43,8 @@ export default function ShareModal({ open, setOpen, cid }) {
 
   const shareFile = async (shareTo) => {
     if (!shareTo) {
-      console.log("no address found", address);
+      console.log("no address found to share with", address);
+      return;
     }
     // Then get auth message and sign
     // Note: message should be signed by owner of file.
@@ -57,16 +64,34 @@ export default function ShareModal({ open, setOpen, cid }) {
       console.log("Error while sharing access", error);
     }
 
-    /*
-      data: {
-        cid: "QmTTa7rm2nMjz6wCj9pvRsadrCKyDXm5Vmd2YyBubCvGPi",
-        shareTo: "0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD"
-      }
-    */
-    /*Visit: 
-        https://files.lighthouse.storage/viewFile/<cid>  
-      To view encrypted file
-    */
+    // add to shared with me polybase
+    // 1. Add shared with to file
+    const fileRecordRes = await db
+      .collection("Files")
+      .record(fileid)
+      .call("shareWith", [shareTo]);
+    console.log("added fileis to specific userSharedwith table", fileRecordRes);
+
+    // 2. Add shared with me to the user
+
+    let user;
+    try {
+      // check is user exists in db
+      user = await db.collection("User").record(shareTo).get();
+      console.log("User Already exists", user);
+    } catch (e) {
+      // .create() accepts two params, address and name of user
+      // populate these dynamically with address and name of user
+      user = await db.collection("User").create([shareTo, "Yash-TestName"]);
+      console.log("User created", user);
+    }
+
+    const recordData = await db
+      .collection("User")
+      .record(shareTo)
+      .call("shared", [fileid]);
+    console.log("added fileis to specific userSharedwith table", recordData);
+    setOpen(false);
   };
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {

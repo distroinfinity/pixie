@@ -17,9 +17,14 @@ import { Share } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ShareModal from "./shareModal";
-
 import { ethers } from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
+import { Polybase } from "@polybase/client";
+
+const db = new Polybase({
+  defaultNamespace:
+    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
+});
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -32,11 +37,21 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function FileCard({ data }) {
-  // console.log("datataaa", data);
+export default function FileCard({ fileid }) {
   const [expanded, setExpanded] = useState(false);
-  const [fileURL, setFileURL] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
+  const [fileURL, setFileURL] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [file, setFile] = useState(null);
+
+  async function loadFile() {
+    let file = await db.collection("Files").record(fileid).get();
+    console.log("fetched file", file.data);
+    setFile(file.data);
+  }
+  useEffect(() => {
+    // load file data from polybase
+    loadFile();
+  }, []);
 
   const sign_auth_message = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -94,7 +109,12 @@ export default function FileCard({ data }) {
 
   return (
     <>
-      <ShareModal open={open} setOpen={setOpen} cid={data.cid} />
+      <ShareModal
+        open={open}
+        setOpen={setOpen}
+        cid={file?.cid}
+        fileid={fileid}
+      />
       <Card sx={{ maxWidth: 300 }}>
         <CardHeader
           avatar={
@@ -125,7 +145,7 @@ export default function FileCard({ data }) {
         <CardActions disableSpacing>
           <IconButton
             onClick={() => {
-              decrypt(data.cid);
+              decrypt(file?.cid);
             }}
             aria-label="add to favorites"
           >

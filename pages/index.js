@@ -38,7 +38,7 @@ export default function Home() {
     }
   }
   useEffect(() => {
-    getCurrentFileId();
+    //getCurrentFileId();
   }, []);
 
   const encryptionSignature = async () => {

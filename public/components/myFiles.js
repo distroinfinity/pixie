@@ -5,7 +5,6 @@ import Pixie from "./../../artifacts/contracts/Pixie.sol/Pixie.json";
 import lighthouse, { upload } from "@lighthouse-web3/sdk";
 import FileCard from "./fileCard";
 import { Polybase } from "@polybase/client";
-import { useCollection } from "@polybase/react";
 
 const db = new Polybase({
   defaultNamespace:
@@ -30,8 +29,8 @@ export const MyFiles = () => {
       console.log("User does not exist, please sign up", error);
       return;
     }
-    console.log("useer data", user);
-    // setMyFiles(uploadsRes.data.uploads);
+    console.log("useer data", user.data);
+    setMyFiles(user.data.files);
   }
   useEffect(() => {
     getMyFiles();
@@ -41,9 +40,9 @@ export const MyFiles = () => {
     <>
       {myFiles.length > 0 ? (
         <div style={{ display: "flex" }}>
-          {myFiles?.map((file, index) => (
+          {myFiles?.map((fileid, index) => (
             <div key={index}>
-              <FileCard data={file}></FileCard>
+              <FileCard fileid={fileid}></FileCard>
             </div>
           ))}
         </div>
