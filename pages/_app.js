@@ -6,15 +6,18 @@ import "@fontsource/roboto/700.css";
 
 import { MoralisProvider } from "react-moralis";
 import { NotificationProvider } from "web3uikit";
+import UserContext from "../public/contexts/userContexts";
+
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <MoralisProvider initializeOnMount={false}>
-        <NotificationProvider>
-          <Component {...pageProps} />;
-        </NotificationProvider>
-      </MoralisProvider>
-      ;
+      <UserContext>
+        <MoralisProvider initializeOnMount={false}>
+          <NotificationProvider>
+            <Component {...pageProps} />
+          </NotificationProvider>
+        </MoralisProvider>
+      </UserContext>
     </>
   );
 }

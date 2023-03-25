@@ -44,6 +44,7 @@ export default function FileCard({ fileid, sharedFiles }) {
   const [file, setFile] = useState(null);
 
   async function loadFile() {
+    console.log("fileId suppied", fileid);
     let file = await db.collection("Files").record(fileid).get();
     console.log("fetched file", file.data);
     setFile(file.data);

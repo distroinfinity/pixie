@@ -1,40 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { PixieAddress } from "./../../config";
-import Pixie from "./../../artifacts/contracts/Pixie.sol/Pixie.json";
-import lighthouse, { upload } from "@lighthouse-web3/sdk";
 import FileCard from "./fileCard";
 import { Polybase } from "@polybase/client";
+import { User_data } from "./../contexts/userContexts";
+import { useContext } from "react";
+import { useRouter } from "next/router";
 
 const db = new Polybase({
   defaultNamespace:
     "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
 });
 export const MyFiles = ({ sharedFiles }) => {
-  const [myFiles, setMyFiles] = useState([]);
+  const { user } = useContext(User_data);
+  const [userId, setUserId] = useState(user.id);
+  const [myFiles, setMyFiles] = useState(user.files);
 
-  async function getMyFiles() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const address = await signer.getAddress();
-
-    let user;
-    try {
-      user = await db.collection("User").record(address).get();
-    } catch (error) {
-      console.log("User does not exist, please sign up", error);
-      return;
-    }
-    console.log("useer data", user.data);
-    if (!sharedFiles) {
-      setMyFiles(user.data.files);
-    } else {
-      setMyFiles(user.data.sharedWithMe);
-    }
-  }
-  useEffect(() => {
-    getMyFiles();
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>

@@ -6,10 +6,15 @@ import Pixie from "./../artifacts/contracts/Pixie.sol/Pixie.json";
 import lighthouse from "@lighthouse-web3/sdk";
 import Header from "../public/components/header";
 import BasicTabs from "../public/components/mainTabs";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
 import { Polybase } from "@polybase/client";
-import { useCollection } from "@polybase/react";
+import { Auth } from "@polybase/auth";
+import { Button } from "@mui/material";
+import { useContext } from "react";
+import { User_data } from "../public/contexts/userContexts";
+import { useRouter } from "next/router";
+
+const auth = typeof window !== "undefined" ? new Auth() : null;
 
 const db = new Polybase({
   defaultNamespace:
@@ -17,6 +22,47 @@ const db = new Polybase({
 });
 
 export default function Home() {
+  const { user, setUser } = useContext(User_data);
+
+  async function signIn() {
+    const authState = await auth.signIn();
+    console.log("signed in", authState);
+    // get public
+    let publicKey = authState.userId;
+
+    if (!publicKey) {
+      publicKey = await getPublicKey();
+    }
+
+    // Create user if not exists
+    let user;
+    try {
+      user = await db.collection("User").record(publicKey).get();
+      console.log("User Already exists");
+    } catch (e) {
+      // .create() accepts two params, address and name of user
+      // populate these dynamically with address and name of user
+      user = await db.collection("User").create([publicKey, "TestName - Yash"]);
+      console.log("New User created");
+    }
+
+    console.log("user is ", user.data);
+    setUser(user.data);
+    // setSignIn(true);
+    return;
+  }
+
+  async function signOut() {
+    const authState = await auth.signOut();
+    console.log("singed out", authState);
+    setUser(null);
+  }
+
+  function sendData() {
+    var data = document.getElementById("context_id").value;
+    setMessage(data);
+  }
+
   async function getCurrentFileId() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     // const provider = new ethers.providers.JsonRpcProvider();
@@ -38,13 +84,15 @@ export default function Home() {
     }
   }
   useEffect(() => {
+    console.log("user signed in as", user);
     //getCurrentFileId();
-  }, []);
+  }, [user]);
 
   const encryptionSignature = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await signer.getAddress();
+
     const messageRequested = (await lighthouse.getAuthMessage(address)).data
       .message;
     const signedMessage = await signer.signMessage(messageRequested);
@@ -120,7 +168,8 @@ export default function Home() {
     const cid = file.Hash;
     const fileName = "testFileName";
     const time = Date.now();
-    await addToPolybase(createdFileId, fileName, cid, time, address);
+    // const address = user.id;
+    await addToPolybase(createdFileId, fileName, cid, time, user.id);
   }
   const deployEncrypted = async (e) => {
     // 1. Upload encrypted file to lighthouse
@@ -164,13 +213,68 @@ export default function Home() {
           content="Share your files securely over blockchains"
         />
       </Head>
+      {/* <header>
+        <div className="bg-indigo-100  py-8 flex">
+          <div
+            onClick={() => router.push("/")}
+            className="mx-16 font-bold text-xl text-gray-600 cursor-pointer"
+          >
+            first component
+          </div>
+          <div
+            onClick={() => router.push("/share")}
+            className="mx-2 text-xl font-bold text-gray-600 cursor-pointer"
+          >
+            second component
+          </div>
+        </div>
+      </header> */}
+      {/* <section>
+        <div className="py-8 px-16">
+          <h1> Shared value is {message}</h1>
+          <h1 className="text-xl text-gray-600 my-4">
+            Enter your content to pass another component
+          </h1>
+          <input
+            type="text"
+            id="context_id"
+            className="border rounded border-gray-600 py-1 w-96"
+          ></input>
+          <div>
+            <button
+              onClick={() => sendData()}
+              className="w-fit border bg-green-600 text-white py-1 px-4 rounded font-bold my-4 hover:bg-green-700
+                cursor-pointer"
+            >
+              send
+            </button>{" "}
+          </div>
+        </div>
+      </section> */}
       <Header></Header>
       <h1 className={styles.title}>Welcome to Pixie</h1>
-      <div>
-        <h1>Upload an File</h1>
-        <input onChange={(e) => deployEncrypted(e)} type="file" />
+
+      <div style={{ display: "flex" }}>
+        {user && (
+          <div>
+            <h1>Upload an File</h1>
+            <input onChange={(e) => deployEncrypted(e)} type="file" />
+          </div>
+        )}
+
+        <div>
+          {user == undefined ? (
+            <Button variant="outlined" onClick={signIn}>
+              Sign In
+            </Button>
+          ) : (
+            <Button variant="outlined" onCLick={signOut}>
+              Sign Out
+            </Button>
+          )}
+        </div>
       </div>
-      <BasicTabs />
+      {user ? <BasicTabs /> : ""}
     </div>
   );
 }
