@@ -1,5 +1,5 @@
 {
-  "name": "pixie",
+  "name": "pixieimproved",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,46 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lighthouse-web3/sdk": "^0.1.12",
+
+    "@chakra-ui/icons": "^2.0.17",
+    "@chakra-ui/react": "^2.5.4",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "@fontsource/roboto": "^4.5.8",
-    "@lighthouse-web3/sdk": "^0.1.12",
-    "@mui/icons-material": "^5.11.11",
-    "@mui/material": "^5.11.13",
-    "@mui/styled-engine-sc": "^5.11.11",
-    "@nomiclabs/hardhat-ethers": "^2.2.2",
-    "@nomiclabs/hardhat-waffle": "^2.0.5",
-    "@openzeppelin/contracts": "^4.8.2",
-    "@web3uikit/core": "^0.2.47",
-    "@web3uikit/icons": "^0.2.46",
-    "@web3uikit/web3": "^0.2.2",
-    "axios": "^1.3.4",
-    "chai": "^4.3.7",
-    "crypto-js": "^4.1.1",
-    "ethereum-waffle": "^4.0.10",
-    "ethers": "^5.7.2",
-    "hardhat": "^2.13.0",
-    "ipfs-http-client": "^60.0.0",
-    "minimist": "^1.2.5",
-    "moralis-v1": "^1.11.0",
-    "next": "13.2.3",
+    "@polybase/auth": "^0.3.38",
+    "@polybase/client": "^0.3.38",
+    "framer-motion": "^10.9.2",
+    "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-moralis": "^1.4.2",
-    "styled-components": "^5.3.9",
-    "web3.storage": "^4.5.4",
-    "web3modal": "^1.9.12",
-    "web3uikit": "^1.0.4",
-    "@polybase/auth": "^0.3.32",
-    "@polybase/client": "^0.3.32",
-    "@polybase/eth": "^0.3.32",
-    "@polybase/react": "^0.3.32"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.13",
-    "eslint": "8.35.0",
-    "eslint-config-next": "13.2.3",
-    "postcss": "^8.4.21",
-    "tailwindcss": "^3.2.7"
+    "react-icons": "^4.8.0"
   }
 }

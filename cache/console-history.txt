@@ -1,7 +1,0 @@
-.help
-createFile()
-exit()
-quit()
-exit
-quit
-que
