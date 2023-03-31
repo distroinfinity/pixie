@@ -116,6 +116,11 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
                 <br></br>
                 <br></br>
                 <Text fontSize="2xl">Shared with:</Text>
+                {file?.sharedWith?.length == 0 ? (
+                  <Text>Not shared with anybody yet</Text>
+                ) : (
+                  ""
+                )}
                 {file?.sharedWith?.map((address, index) => {
                   return (
                     <HStack>
@@ -128,7 +133,7 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
                           revokeFileAccess(file?.cid, address);
                         }}
                       >
-                        Revoke
+                        Revoke Access
                       </Button>
                     </HStack>
                   );
@@ -149,10 +154,10 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            {/* <Button colorScheme="blue" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
+            <Button variant="ghost">Secondary Action</Button> */}
           </ModalFooter>
         </ModalContent>
       </Modal>

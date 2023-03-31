@@ -1,1 +1,1 @@
-export const PixieAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+export const PixieAddress = "0x6c2ce330c2Cfc7C2553EA468330153E90D0dC0A8"

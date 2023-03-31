@@ -80,7 +80,7 @@ function Share({ fileid, cid }) {
     // add to shared with me polybase
     // 1. Add shared with to file
     const fileRecordRes = await db
-      .collection("Files")
+      .collection("FilesTable")
       .record(fileid)
       .call("shareWith", [shareTo]);
     console.log("added sharedwith to specific file table", fileRecordRes);
@@ -90,17 +90,17 @@ function Share({ fileid, cid }) {
     let user;
     try {
       // check is user exists in db
-      user = await db.collection("User").record(shareTo).get();
+      user = await db.collection("UserTable").record(shareTo).get();
       console.log("User Already exists", user);
     } catch (e) {
       // .create() accepts two params, address and name of user
       // populate these dynamically with address and name of user
-      user = await db.collection("User").create([shareTo, "Yash-TestName"]);
+      user = await db.collection("UserTable").create([shareTo, "Yash-TestName"]);
       console.log("User created", user);
     }
 
     const recordData = await db
-      .collection("User")
+      .collection("UserTable")
       .record(shareTo)
       .call("shared", [fileid]);
     console.log("added fileis to specific userSharedwith table", recordData);

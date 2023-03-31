@@ -39,11 +39,11 @@ export default function Home() {
     // Create user if not exists
     let user;
     try {
-      user = await db.collection("User").record(publicKey).get();
+      user = await db.collection("UserTable").record(publicKey).get();
       console.log("User Already exists");
     } catch (e) {
       // .create() accepts two params, address and name of user
-      user = await db.collection("User").create([publicKey, "placeholderName"]);
+      user = await db.collection("UserTable").create([publicKey, "placeholderName"]);
       console.log("New User created");
     }
 

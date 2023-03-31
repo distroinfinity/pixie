@@ -42,18 +42,21 @@ function AddFile({ setFiles }) {
   }, []);
 
   async function getCurrentFileId() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // const provider = new ethers.providers.JsonRpcProvider();
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //only read operation
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://rpc-mumbai.maticvigil.com"
+    );
 
-    const signer = provider.getSigner();
+    // const signer = provider.getSigner();
     const pixieContract = new ethers.Contract(
       PixieAddress,
       Pixie.abi,
       provider
     );
-    const pixie = pixieContract.connect(signer);
+    // const pixie = pixieContract.connect(signer);
     try {
-      let id = await pixie.getCurrentFileId();
+      let id = await pixieContract.getCurrentFileId();
       console.log("file id current  ", id.toString() - 1);
 
       return (id.toString() - 1).toString();
@@ -65,7 +68,7 @@ function AddFile({ setFiles }) {
     let file;
     console.log("input", createdFileId, fileName, cid, time);
     file = await db
-      .collection("Files")
+      .collection("FilesTable")
       .create([createdFileId, fileName, cid, time]);
     console.log("File created", file);
 
@@ -75,19 +78,21 @@ function AddFile({ setFiles }) {
     let user;
     try {
       // check is user exists in db
-      user = await db.collection("User").record(address).get();
+      user = await db.collection("UserTable").record(address).get();
       console.log("User Already exists", user);
     } catch (e) {
       // .create() accepts two params, address and name of user
       // populate these dynamically with address and name of user
-      user = await db.collection("User").create([address, "Yash-TestName"]);
+      user = await db
+        .collection("UserTable")
+        .create([address, "Yash-TestName"]);
       console.log("User created", user);
     }
 
     const userId = user.data.id;
 
     const recordData = await db
-      .collection("User")
+      .collection("UserTable")
       .record(userId)
       .call("addFiles", [id]);
     console.log("added file to specific user table", recordData.data);
@@ -111,8 +116,11 @@ function AddFile({ setFiles }) {
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     // const provider = new ethers.providers.JsonRpcProvider();
+    // const provider = new ethers.providers.JsonRpcProvider(
+    //   "https://rpc-mumbai.maticvigil.com"
+    // );
+
     const signer = provider.getSigner();
-    const address = await signer.getAddress();
     const pixieContract = new ethers.Contract(
       PixieAddress,
       Pixie.abi,
@@ -132,6 +140,7 @@ function AddFile({ setFiles }) {
   }
   const encryptionSignature = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
     const signer = provider.getSigner();
     const address = await signer.getAddress();
 
@@ -179,6 +188,11 @@ function AddFile({ setFiles }) {
       console.log("error while uploading to lighthouse");
       return;
     }
+    // let file = {
+    //   Name: "secretImage.png",
+    //   Hash: "QmTzeXzfy2RXhQ7ReYKozNmtN1ENLqzSzbdhUa1YJVVV5Z",
+    //   Size: "270877",
+    // };
     await createFile(file);
   };
 

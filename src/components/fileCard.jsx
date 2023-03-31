@@ -32,7 +32,7 @@ const FileCard = ({ fileId, share }) => {
 
   async function loadFile() {
     if (!fileId) return;
-    let file = await db.collection("Files").record(fileId).get();
+    let file = await db.collection("FilesTable").record(fileId).get();
     // console.log("fetched file", file.data);
     setFile(file.data);
   }
@@ -43,6 +43,9 @@ const FileCard = ({ fileId, share }) => {
 
   const sign_auth_message = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const provider = new ethers.providers.JsonRpcProvider(
+    //   "https://rpc-mumbai.maticvigil.com"
+    // );
     const signer = provider.getSigner();
     const publicKey = (await signer.getAddress()).toLowerCase();
     const messageRequested = (await lighthouse.getAuthMessage(publicKey)).data
@@ -137,7 +140,7 @@ const FileCard = ({ fileId, share }) => {
               {file?.name.substring(0, 14)}{" "}
               {file?.name.length > 14 ? "..." : ""}
             </Heading>
-            <Text>Sample test for description</Text>
+            {/* <Text>Sample test for description</Text> */}
             {/* <Text color="blue.600" fontSize="2xl">
             $450
           </Text> */}

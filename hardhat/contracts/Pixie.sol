@@ -5,8 +5,11 @@ pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./PixieEnums.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-contract Pixie {
+// import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract Pixie is ERC1155 {
     struct User {
         // string name;
         bool exists;
@@ -38,7 +41,7 @@ contract Pixie {
     mapping(uint256 => File) private idToFile;
     mapping(address => User) private addressToUser;
 
-    constructor() payable {
+    constructor() payable ERC1155("") {
         owner = payable(msg.sender);
         console.log("Contract deployed, owner set");
     }
@@ -53,26 +56,25 @@ contract Pixie {
         addressToUser[msg.sender].myFiles.push(id);
 
         console.log("new item id ", id);
-        // return id;
     }
 
-    // function createUser() public {
-    //     //check if user already exists
-    //     require(!addressToUser[msg.sender].exists, "User Already exist");
+    // function to mint nfts for a file in our system fileId = tokenId
+    function mint(
+        uint256 id, // supply file id that will act as tokenId as well
+        uint256 amount,
+        bool updateUri,
+        string memory newuri
+    ) public payable {
+        require(
+            idToFile[id].owner == msg.sender,
+            "You are not the owner of the file"
+        );
+        _mint(msg.sender, id, amount, "");
+        if (updateUri == true) {
+            _setURI(newuri);
+        }
+    }
 
-    //     User memory tempUser;
-    //     // tempUser.name = "testUser";
-    //     tempUser.exists = true;
-    //     addressToUser[msg.sender] = tempUser;
-    // }
-
-    // getter setter
-    //get user
-    // function getUser(address _user) public view returns (User memory) {
-    //     return addressToUser[_user];
-    // }
-
-    // get file
     function getFiles() public view userExists returns (File[] memory) {
         address user = msg.sender;
         File[] memory myFiles = new File[](addressToUser[user].myFiles.length);
@@ -81,16 +83,6 @@ contract Pixie {
         }
         return myFiles;
     }
-
-    // get visibility of a file
-    // function checkAccess(uint256 _id) public view returns (Access) {
-    //     return idToFile[_id].access;
-    // }
-
-    // change access of a file
-    // function changeAccess(uint256 _id, Access _access) public onlyAuthor(_id) {
-    //     idToFile[_id].access = _access;
-    // }
 
     function getCurrentFileId() public view returns (uint256) {
         return fileId.current();
