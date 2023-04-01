@@ -56,6 +56,8 @@ contract Pixie is ERC1155 {
         addressToUser[msg.sender].myFiles.push(id);
 
         console.log("new item id ", id);
+
+        // emit event - get transaction - add event - use etherjs - subscribe to a topic
     }
 
     // function to mint nfts for a file in our system fileId = tokenId

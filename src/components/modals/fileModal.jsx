@@ -19,6 +19,7 @@ import TimestampDisplay from "../dateTime";
 import lighthouse from "@lighthouse-web3/sdk";
 import { UnlockIcon, CloseIcon } from "@chakra-ui/icons";
 import { ethers } from "ethers";
+import MintPass from "./mintPass";
 
 export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
   const [fileURL, setFileURL] = useState(null);
@@ -93,6 +94,9 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
     // TODO Remove entry from polybase db to
     console.log("Access Revoked from", from);
   }
+
+  async function mintPass() {}
+
   return (
     <>
       {/* <Button onClick={onOpen}>Open Modal</Button> */}
@@ -114,6 +118,13 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
                   ></TimestampDisplay>
                 </Text>
                 <br></br>
+                <HStack>
+                  <MintPass file={file} />
+
+                  <Button variant="solid" colorScheme="blue" onClick={mintPass}>
+                    View pass
+                  </Button>
+                </HStack>
                 <br></br>
                 <Text fontSize="2xl">Shared with:</Text>
                 {file?.sharedWith?.length == 0 ? (
