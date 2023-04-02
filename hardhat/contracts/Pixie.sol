@@ -18,6 +18,7 @@ contract Pixie is ERC1155 {
     struct File {
         uint256 id;
         address owner;
+        bool accessTokens;
         // string content;
         // Access access;
     }
@@ -50,7 +51,7 @@ contract Pixie is ERC1155 {
     function createFile() public {
         uint256 id = fileId.current();
         fileId.increment();
-        File memory tempFile = File(id, msg.sender);
+        File memory tempFile = File(id, msg.sender, false);
 
         idToFile[id] = tempFile;
         addressToUser[msg.sender].myFiles.push(id);
@@ -75,6 +76,9 @@ contract Pixie is ERC1155 {
         if (updateUri == true) {
             _setURI(newuri);
         }
+        if (!idToFile[id].accessTokens) {
+            idToFile[id].accessTokens = true;
+        }
     }
 
     function getFiles() public view userExists returns (File[] memory) {
@@ -84,6 +88,10 @@ contract Pixie is ERC1155 {
             myFiles[i] = idToFile[addressToUser[user].myFiles[i]];
         }
         return myFiles;
+    }
+
+    function getFile(uint256 _id) public view returns (File memory) {
+        return idToFile[_id];
     }
 
     function getCurrentFileId() public view returns (uint256) {

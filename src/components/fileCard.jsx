@@ -19,10 +19,12 @@ import { ethers } from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
 import TimestampDisplay from "./dateTime";
 import Router, { useRouter } from "next/router";
+
 const db = new Polybase({
   defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
+    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
 });
+
 import { FileModal } from "./modals/fileModal";
 
 const FileCard = ({ fileId, share }) => {
@@ -32,7 +34,7 @@ const FileCard = ({ fileId, share }) => {
 
   async function loadFile() {
     if (!fileId) return;
-    let file = await db.collection("FilesTable").record(fileId).get();
+    let file = await db.collection("Files").record(fileId).get();
     // console.log("fetched file", file.data);
     setFile(file.data);
   }

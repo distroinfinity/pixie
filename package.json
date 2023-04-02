@@ -9,18 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@lighthouse-web3/sdk": "^0.1.12",
-
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.5.4",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@lighthouse-web3/sdk": "^0.1.12",
     "@polybase/auth": "^0.3.38",
     "@polybase/client": "^0.3.38",
     "framer-motion": "^10.9.2",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-icons": "^4.8.0"
+    "react-icons": "^4.8.0",
+    "web3.storage": "^4.5.4"
   }
 }

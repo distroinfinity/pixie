@@ -20,7 +20,7 @@ import { HiShare } from "react-icons/hi";
 
 const db = new Polybase({
   defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
+    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
 });
 
 function Share({ fileid, cid }) {
@@ -80,7 +80,7 @@ function Share({ fileid, cid }) {
     // add to shared with me polybase
     // 1. Add shared with to file
     const fileRecordRes = await db
-      .collection("FilesTable")
+      .collection("Files")
       .record(fileid)
       .call("shareWith", [shareTo]);
     console.log("added sharedwith to specific file table", fileRecordRes);
@@ -90,17 +90,17 @@ function Share({ fileid, cid }) {
     let user;
     try {
       // check is user exists in db
-      user = await db.collection("UserTable").record(shareTo).get();
+      user = await db.collection("User").record(shareTo).get();
       console.log("User Already exists", user);
     } catch (e) {
       // .create() accepts two params, address and name of user
       // populate these dynamically with address and name of user
-      user = await db.collection("UserTable").create([shareTo, "Yash-TestName"]);
+      user = await db.collection("User").create([shareTo, "Yash-TestName"]);
       console.log("User created", user);
     }
 
     const recordData = await db
-      .collection("UserTable")
+      .collection("User")
       .record(shareTo)
       .call("shared", [fileid]);
     console.log("added fileis to specific userSharedwith table", recordData);

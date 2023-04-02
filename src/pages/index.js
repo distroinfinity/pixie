@@ -18,7 +18,7 @@ const auth = typeof window !== "undefined" ? new Auth() : null;
 
 const db = new Polybase({
   defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
+    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
 });
 
 export default function Home() {
@@ -28,7 +28,6 @@ export default function Home() {
   async function signIn() {
     setSigningIn(true);
     const authState = await auth.signIn();
-    console.log("signed in", authState);
     // get public
     let publicKey = authState.userId;
 
@@ -39,11 +38,11 @@ export default function Home() {
     // Create user if not exists
     let user;
     try {
-      user = await db.collection("UserTable").record(publicKey).get();
+      user = await db.collection("User").record(publicKey).get();
       console.log("User Already exists");
     } catch (e) {
       // .create() accepts two params, address and name of user
-      user = await db.collection("UserTable").create([publicKey, "placeholderName"]);
+      user = await db.collection("User").create([publicKey, "placeholderName"]);
       console.log("New User created");
     }
 
@@ -54,7 +53,6 @@ export default function Home() {
 
   async function signOut() {
     const authState = await auth.signOut();
-    console.log("singed out", authState);
     setUser(null);
   }
 

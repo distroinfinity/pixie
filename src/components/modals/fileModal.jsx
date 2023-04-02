@@ -20,12 +20,45 @@ import lighthouse from "@lighthouse-web3/sdk";
 import { UnlockIcon, CloseIcon } from "@chakra-ui/icons";
 import { ethers } from "ethers";
 import MintPass from "./mintPass";
+// import { Button } from "@web3uikit/core";
+// import NFT from "@web3uikit/core";
+
+import { PixieAddress } from "../../../hardhat/config";
+import Pixie from "./../../../hardhat/artifacts/contracts/Pixie.sol/Pixie.json";
 
 export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
   const [fileURL, setFileURL] = useState(null);
+  const [tokensExist, setTokensExist] = useState(false);
+
+  async function checkIfPassExist() {
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://rpc-mumbai.maticvigil.com"
+    );
+
+    // const signer = provider.getSigner();
+    const pixieContract = new ethers.Contract(
+      PixieAddress,
+      Pixie.abi,
+      provider
+    );
+    // const pixie = pixieContract.connect(signer);
+
+    try {
+      let fetchedFile = await pixieContract.getFile(file.id);
+      console.log("file   ", fetchedFile);
+      if (fetchedFile.accessTokens) {
+        setTokensExist(true);
+      }
+    } catch (error) {
+      console.log("error while fetching file  ", error);
+    }
+  }
 
   useEffect(() => {
-    console.log("file id is", file);
+    if (file) {
+      console.log("passed file is", file);
+      checkIfPassExist();
+    }
   }, []);
 
   const sign_auth_message = async () => {
@@ -95,8 +128,6 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
     console.log("Access Revoked from", from);
   }
 
-  async function mintPass() {}
-
   return (
     <>
       {/* <Button onClick={onOpen}>Open Modal</Button> */}
@@ -117,13 +148,24 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
                     timestamp={file?.timeCreated}
                   ></TimestampDisplay>
                 </Text>
-                <br></br>
-                <HStack>
-                  <MintPass file={file} />
 
-                  <Button variant="solid" colorScheme="blue" onClick={mintPass}>
-                    View pass
-                  </Button>
+                <br></br>
+                <HStack bg="gray.100" rounded="md">
+                  <MintPass file={file} tokensExist={tokensExist} />
+                  {tokensExist && (
+                    <Button
+                      variant="solid"
+                      colorScheme="blue"
+                      onClick={() => {
+                        window.open(
+                          `https://testnets.opensea.io/assets/mumbai/0x7A817D959DB2307fdb82dbB3B3f4bf8925D5d6C7/${file.id}`,
+                          "_blank"
+                        );
+                      }}
+                    >
+                      Get pass
+                    </Button>
+                  )}
                 </HStack>
                 <br></br>
                 <Text fontSize="2xl">Shared with:</Text>

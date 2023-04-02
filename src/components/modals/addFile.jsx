@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 
 const db = new Polybase({
   defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie",
+    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
 });
 
 function AddFile({ setFiles }) {
@@ -68,7 +68,7 @@ function AddFile({ setFiles }) {
     let file;
     console.log("input", createdFileId, fileName, cid, time);
     file = await db
-      .collection("FilesTable")
+      .collection("Files")
       .create([createdFileId, fileName, cid, time]);
     console.log("File created", file);
 
@@ -78,21 +78,19 @@ function AddFile({ setFiles }) {
     let user;
     try {
       // check is user exists in db
-      user = await db.collection("UserTable").record(address).get();
+      user = await db.collection("User").record(address).get();
       console.log("User Already exists", user);
     } catch (e) {
       // .create() accepts two params, address and name of user
       // populate these dynamically with address and name of user
-      user = await db
-        .collection("UserTable")
-        .create([address, "Yash-TestName"]);
+      user = await db.collection("User").create([address, "Yash-TestName"]);
       console.log("User created", user);
     }
 
     const userId = user.data.id;
 
     const recordData = await db
-      .collection("UserTable")
+      .collection("User")
       .record(userId)
       .call("addFiles", [id]);
     console.log("added file to specific user table", recordData.data);
@@ -140,7 +138,7 @@ function AddFile({ setFiles }) {
   }
   const encryptionSignature = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    
+
     const signer = provider.getSigner();
     const address = await signer.getAddress();
 
