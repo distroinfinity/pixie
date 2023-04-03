@@ -11,26 +11,25 @@ import {
   Button,
   Image,
   useDisclosure,
+  Spinner,
 } from "@chakra-ui/react";
 import { UnlockIcon } from "@chakra-ui/icons";
 import Share from "./modals/share";
 import { Polybase } from "@polybase/client";
 import { ethers } from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
-import TimestampDisplay from "./dateTime";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 const db = new Polybase({
   defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
+    "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
 });
 
-import { FileModal } from "./modals/fileModal";
-
 const FileCard = ({ fileId, share }) => {
+  const router = useRouter();
+
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(null);
-  const router = useRouter();
 
   async function loadFile() {
     if (!fileId) return;
@@ -45,9 +44,6 @@ const FileCard = ({ fileId, share }) => {
 
   const sign_auth_message = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // const provider = new ethers.providers.JsonRpcProvider(
-    //   "https://rpc-mumbai.maticvigil.com"
-    // );
     const signer = provider.getSigner();
     const publicKey = (await signer.getAddress()).toLowerCase();
     const messageRequested = (await lighthouse.getAuthMessage(publicKey)).data
@@ -59,9 +55,8 @@ const FileCard = ({ fileId, share }) => {
   /* Decrypt file */
   const decrypt = async (cid) => {
     if (!cid) return;
-    // Fetch file encryption key
     const { publicKey, signedMessage } = await sign_auth_message();
-    console.log(publicKey, signedMessage);
+    // console.log(publicKey, signedMessage);
     /*
       fetchEncryptionKey(cid, publicKey, signedMessage)
         Parameters:
@@ -90,7 +85,7 @@ const FileCard = ({ fileId, share }) => {
       keyObject.data.key,
       fileType
     );
-    console.log(decrypted);
+    // console.log(decrypted);
     /*
       Response: blob
     */
@@ -107,28 +102,19 @@ const FileCard = ({ fileId, share }) => {
     decrypt(file.cid);
   }
   async function openFilePage() {
-    console.log("opening individual file page", file);
-    // router.push(`./files/${file.id}`);
-    onOpen(true);
+    console.log("pressing file ", fileId);
+    router.push(`./files/${fileId}`);
+    // onOpen(true);
   }
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      {file && (
-        <FileModal
-          file={file}
-          isOpen={isOpen}
-          onOpen={onOpen}
-          onClose={onClose}
-        />
-      )}
-
       <Card maxW="sm">
         <CardBody
           onClick={() => {
-            onOpen(true);
+            openFilePage();
           }}
         >
           <Image
@@ -142,11 +128,6 @@ const FileCard = ({ fileId, share }) => {
               {file?.name.substring(0, 14)}{" "}
               {file?.name.length > 14 ? "..." : ""}
             </Heading>
-            {/* <Text>Sample test for description</Text> */}
-            {/* <Text color="blue.600" fontSize="2xl">
-            $450
-          </Text> */}
-            {/* <TimestampDisplay timestamp={file?.timeCreated} /> */}
           </Stack>
         </CardBody>
         <Divider />

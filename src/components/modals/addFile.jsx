@@ -23,20 +23,21 @@ import { useRouter } from "next/router";
 
 const db = new Polybase({
   defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
+    "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
 });
 
 function AddFile({ setFiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [captureEvent, setCaptureEvent] = useState(null);
   const { user, setUser } = useContext(User_data);
+  const [encrypting, setEncrypting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    console.log("user at add file modal", user);
+    // console.log("user at add file modal", user);
     if (!user) {
       console.log("You are not signed in");
-      router.push("/");
+      // router.push("/");
       return;
     }
   }, []);
@@ -66,28 +67,27 @@ function AddFile({ setFiles }) {
   }
   async function addToPolybase(createdFileId, fileName, cid, time, address) {
     let file;
-    console.log("input", createdFileId, fileName, cid, time);
     file = await db
       .collection("Files")
-      .create([createdFileId, fileName, cid, time]);
-    console.log("File created", file);
+      .create([createdFileId, fileName, cid, time, address]);
+    console.log("File added to polybase");
 
     // add fileId to user table
     let id = file.data.id;
 
-    let user;
-    try {
-      // check is user exists in db
-      user = await db.collection("User").record(address).get();
-      console.log("User Already exists", user);
-    } catch (e) {
-      // .create() accepts two params, address and name of user
-      // populate these dynamically with address and name of user
-      user = await db.collection("User").create([address, "Yash-TestName"]);
-      console.log("User created", user);
-    }
+    // let user;
+    // try {
+    //   // check is user exists in db
+    //   user = await db.collection("User").record(address).get();
+    //   console.log("User Already exists", user);
+    // } catch (e) {
+    //   // .create() accepts two params, address and name of user
+    //   // populate these dynamically with address and name of user
+    //   user = await db.collection("User").create([address, "Yash-TestName"]);
+    //   console.log("User created", user);
+    // }
 
-    const userId = user.data.id;
+    const userId = address;
 
     const recordData = await db
       .collection("User")
@@ -95,13 +95,12 @@ function AddFile({ setFiles }) {
       .call("addFiles", [id]);
     console.log("added file to specific user table", recordData.data);
     setFiles(recordData.data.files);
-    console.log("user in add file", user.data);
     // setUser(user.data);
     onClose(true);
   }
 
   async function createFile(file) {
-    console.log("uploading on chain file data", file);
+    console.log("uploading on chain file data");
 
     if (!file.Hash) {
       console.log("CID not found");
@@ -113,10 +112,6 @@ function AddFile({ setFiles }) {
     // just store fileId and owner on chain, link db and chain via fileId
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // const provider = new ethers.providers.JsonRpcProvider();
-    // const provider = new ethers.providers.JsonRpcProvider(
-    //   "https://rpc-mumbai.maticvigil.com"
-    // );
 
     const signer = provider.getSigner();
     const pixieContract = new ethers.Contract(
@@ -153,15 +148,14 @@ function AddFile({ setFiles }) {
   const progressCallback = (progressData) => {
     let percentageDone =
       100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
-    console.log(percentageDone);
+    // console.log(percentageDone);
   };
   const deployEncrypted = async () => {
+    setEncrypting(true);
     // 1. Upload encrypted file to lighthouse
 
-    console.log("captures event is", captureEvent);
     // return;
     const sig = await encryptionSignature();
-    console.log("signature", sig);
     let file;
     try {
       const response = await lighthouse.uploadEncrypted(
@@ -192,6 +186,7 @@ function AddFile({ setFiles }) {
     //   Size: "270877",
     // };
     await createFile(file);
+    setEncrypting(false);
   };
 
   function upload() {
@@ -214,7 +209,7 @@ function AddFile({ setFiles }) {
         }}
         _active={{}}
       >
-        <AddIcon /> Add file
+        <AddIcon marginRight="4px" /> Add file
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -223,10 +218,6 @@ function AddFile({ setFiles }) {
           <ModalHeader>Upload a new file</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* <Text>
-              guusldcgvlyuidgcviluegvilergvliegvilsergvilsdfgvilergvilswedgabvhyjlasdgc
-              a wsc gwedi ]wdsvgiawv
-            </Text> */}
             <DragAndDrop
               captureEvent={captureEvent}
               setCaptureEvent={setCaptureEvent}
@@ -234,12 +225,15 @@ function AddFile({ setFiles }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={upload}>
+            <Button
+              isLoading={encrypting}
+              loadingText="Uploading..."
+              colorScheme="blue"
+              mr={3}
+              onClick={upload}
+            >
               Upload
             </Button>
-            {/* <Button variant="ghost" onClick={onClose}>
-              Cancel
-            </Button> */}
           </ModalFooter>
         </ModalContent>
       </Modal>

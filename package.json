@@ -16,11 +16,13 @@
     "@lighthouse-web3/sdk": "^0.1.12",
     "@polybase/auth": "^0.3.38",
     "@polybase/client": "^0.3.38",
+    "web3uikit": "^1.0.4",
     "framer-motion": "^10.9.2",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
-    "web3.storage": "^4.5.4"
+    "web3.storage": "^4.5.4",
+    "moralis-v1": "^1.11.0"
   }
 }

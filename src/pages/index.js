@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import Footer from "@/components/footer";
 import {
   Flex,
   Box,
@@ -18,7 +17,7 @@ const auth = typeof window !== "undefined" ? new Auth() : null;
 
 const db = new Polybase({
   defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
+    "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
 });
 
 export default function Home() {
@@ -28,11 +27,10 @@ export default function Home() {
   async function signIn() {
     setSigningIn(true);
     const authState = await auth.signIn();
-    // get public
     let publicKey = authState.userId;
 
     if (!publicKey) {
-      publicKey = await getPublicKey();
+      publicKey = await getPublicKey(); // to do - add email login support
     }
 
     // Create user if not exists
@@ -94,7 +92,7 @@ export default function Home() {
               textAlign={"center"}
               opacity={"85%"}
             >
-              built with ❤️ by distro at{" "}
+              built with ❤️ by Manu at{" "}
               <a
                 href={"https://eif3.devfolio.co/"}
                 target={"_blank"}
@@ -105,16 +103,18 @@ export default function Home() {
               </a>{" "}
             </Text>
             {user ? (
-              <Text
-                className="sub"
-                fontSize={"24px"}
-                fontWeight={"normal"}
-                w={"1000px"}
-                textAlign={"center"}
-                opacity={"85%"}
-              >
-                gm, {user?.id}
-              </Text>
+              <HStack alignItems="baseline">
+                <Text fontSize={"34px"}> gm,</Text>
+                <Box
+                  rounded="md"
+                  textAlign="center"
+                  bgGradient="linear(to-r, red.400, orange.300, yellow.300, green.400, blue.400, purple.400)"
+                  bgClip="text"
+                  fontSize={"24px"}
+                >
+                  {user?.id}
+                </Box>
+              </HStack>
             ) : (
               ""
             )}
@@ -184,10 +184,7 @@ export default function Home() {
             </Flex>
           </VStack>
         </HStack>
-        {/* <Footer /> */}
       </Flex>
-
-      {/* <Header /> */}
     </>
   );
 }

@@ -29,6 +29,7 @@ function MintPass({ file, tokensExist }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [minting, setMinting] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -71,9 +72,9 @@ function MintPass({ file, tokensExist }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Num Passes:", numPasses);
-    console.log("Selected Image file:", imageFile);
-
+    // console.log("Num Passes:", numPasses);
+    // console.log("Selected Image file:", imageFile);
+    setMinting(true);
     const tokenUri = storeFiles();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     // const provider = new ethers.providers.JsonRpcProvider();
@@ -95,6 +96,8 @@ function MintPass({ file, tokensExist }) {
     if (!tokensExist) {
       applyAccessCondition(file); //to do fix this condition
     }
+    setMinting(false);
+    onClose(true);
   };
   const encryptionSignature = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -141,7 +144,7 @@ function MintPass({ file, tokensExist }) {
     );
 
     console.log("condition applied", response);
-    onClose(true);
+
     /*
       {
         data: {
@@ -201,7 +204,6 @@ function MintPass({ file, tokensExist }) {
         onClick={onOpen}
         rounded={"4px"}
         bg={"#C0DEFF"}
-        margin={"50px"}
         border={"1px solid rgba(255, 255, 255, 0.1)"}
         fontSize={"20px"}
         fontWeight={"normal"}
@@ -211,7 +213,7 @@ function MintPass({ file, tokensExist }) {
         }}
         _active={{}}
       >
-        <AddIcon /> Mint Pass
+        <AddIcon marginRight="4px" /> Mint Pass
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -270,6 +272,8 @@ function MintPass({ file, tokensExist }) {
                 )}
 
                 <Button
+                  isLoading={minting}
+                  loadingText="minting..."
                   mt="4"
                   colorScheme="blue"
                   isDisabled={!selectedImage}

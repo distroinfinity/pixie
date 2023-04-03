@@ -19,8 +19,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { HiShare } from "react-icons/hi";
 
 const db = new Polybase({
-  defaultNamespace:
-    "pk/0xf699df4b2989f26513d93e14fd6e0befd620460546f3706a4e35b10ac3838457a031504254ddac46f6519fcf548ec892cc33043ce74c5fa9018ef5948a685e1d/pixie2",
+  defaultNamespace: "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
 });
 
 function Share({ fileid, cid }) {
