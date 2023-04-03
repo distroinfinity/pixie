@@ -1,13 +1,22 @@
-import { Box, Divider, Text } from "@chakra-ui/react";
+import { Box, Divider, HStack, Image, Text, VStack } from "@chakra-ui/react";
 
 const Footer = () => {
   return (
-    <Box as="footer" textAlign="center">
+    <VStack as="footer" textAlign="center">
       {/* <Divider my={6} /> */}
       <Text fontSize="sm" color="gray.500">
-        © {new Date().getFullYear()} built with ❤️ <br></br> by Manu :)
+        © {new Date().getFullYear()} built with ❤️
       </Text>
-    </Box>
+      <HStack>
+        <Text fontSize="sm" color="gray.500">
+          by Manu XD
+        </Text>
+        <Image
+          boxSize="15px"
+          src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
+        ></Image>
+      </HStack>
+    </VStack>
   );
 };
 

@@ -14,7 +14,7 @@ const SharedWithMe = ({ fileIds }) => {
               <FileCard fileId={fileId} share={true} />
             </div>
           ))
-        : "No files Yet"}
+        : "No files shared with you yet"}
     </SimpleGrid>
   );
 };

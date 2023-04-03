@@ -36,15 +36,15 @@ function Header({ setFiles }) {
             <Flex
               alignItems="center"
               onClick={() => {
-                router.push("./");
+                router.push("/", "/");
               }}
             >
               <Image
                 marginLeft="15px"
                 boxSize="60px"
                 objectFit="cover"
-                src="./images/pixie.png"
-                alt="Pixie"
+                src="/pixie.png"
+                alt="Pixie Cover"
               />
 
               <Heading

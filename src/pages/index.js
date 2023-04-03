@@ -75,7 +75,7 @@ export default function Home() {
             <Image
               boxSize="260px"
               objectFit="cover"
-              src="./images/pixie.png"
+              src="/pixie.png"
               alt="Pixie"
             />
           </Box>
