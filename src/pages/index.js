@@ -16,8 +16,7 @@ import { User_data } from "@/contexts/userContexts";
 const auth = typeof window !== "undefined" ? new Auth() : null;
 
 const db = new Polybase({
-  defaultNamespace:
-    "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
+  defaultNamespace: "pk/0xc8d8ca343f4873ad9d2500bc1cc6ad9b894a581c1e40183c7fff391a4c0e3e3512decaf6525c99bbac2ced536e2d7f1c51ac9957b3b9d27dafbfb2158a4dd06e/pixie-deploy",
 });
 
 export default function Home() {
@@ -102,6 +101,7 @@ export default function Home() {
                 EIF3.0
               </a>{" "}
             </Text>
+
             {user ? (
               <HStack alignItems="baseline">
                 <Text fontSize={"32px"} marginLeft="50px">

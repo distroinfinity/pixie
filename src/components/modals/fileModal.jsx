@@ -158,7 +158,7 @@ export const FileModal = ({ file, isOpen, onOpen, onClose }) => {
                       colorScheme="blue"
                       onClick={() => {
                         window.open(
-                          `https://testnets.opensea.io/assets/mumbai/0x7A817D959DB2307fdb82dbB3B3f4bf8925D5d6C7/${file.id}`,
+                          `https://testnets.opensea.io/assets/mumbai/${PixieAddress}/${file.id}`,
                           "_blank"
                         );
                       }}

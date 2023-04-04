@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 
 const db = new Polybase({
   defaultNamespace:
-    "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
+    "pk/0xc8d8ca343f4873ad9d2500bc1cc6ad9b894a581c1e40183c7fff391a4c0e3e3512decaf6525c99bbac2ced536e2d7f1c51ac9957b3b9d27dafbfb2158a4dd06e/pixie-deploy",
 });
 
 function AddFile({ setFiles }) {
@@ -42,29 +42,6 @@ function AddFile({ setFiles }) {
     }
   }, []);
 
-  async function getCurrentFileId() {
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //only read operation
-    const provider = new ethers.providers.JsonRpcProvider(
-      "https://rpc-mumbai.maticvigil.com"
-    );
-
-    // const signer = provider.getSigner();
-    const pixieContract = new ethers.Contract(
-      PixieAddress,
-      Pixie.abi,
-      provider
-    );
-    // const pixie = pixieContract.connect(signer);
-    try {
-      let id = await pixieContract.getCurrentFileId();
-      console.log("file id current  ", id.toString() - 1);
-
-      return (id.toString() - 1).toString();
-    } catch (error) {
-      console.log("error while fetching file id ", error);
-    }
-  }
   async function addToPolybase(createdFileId, fileName, cid, time, address) {
     let file;
     file = await db
@@ -120,16 +97,22 @@ function AddFile({ setFiles }) {
       provider
     );
     const pixie = pixieContract.connect(signer);
-    let createFile = await pixie.createFile();
-    console.log("File created ", createFile);
+    let tx = await pixie.createFile();
+    const receipt = await tx.wait();
 
-    // store file details on polybase
-    const createdFileId = await getCurrentFileId();
+    const events = receipt.events.filter(
+      (event) => event.event === "fileCreated"
+    );
+    const createdFileId = parseInt(events[0].topics[1]);
+
+    console.log("File created with id", createdFileId);
+
+    // fetch file id properly
     const cid = file.Hash;
     const fileName = file.Name;
     const time = Date.now();
     // const address = user.id;
-    await addToPolybase(createdFileId, fileName, cid, time, user.id);
+    await addToPolybase(createdFileId.toString(), fileName, cid, time, user.id);
   }
   const encryptionSignature = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -231,6 +214,7 @@ function AddFile({ setFiles }) {
               colorScheme="blue"
               mr={3}
               onClick={upload}
+              isDisabled={!captureEvent}
             >
               Upload
             </Button>

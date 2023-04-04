@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 contract Pixie is ERC1155 {
     struct User {
-        // string name;
         bool exists;
         uint256[] myFiles;
     }
@@ -19,17 +18,8 @@ contract Pixie is ERC1155 {
         uint256 id;
         address owner;
         bool accessTokens;
-        // string content;
-        // Access access;
     }
 
-    modifier onlyAuthor(uint256 _id) {
-        require(
-            msg.sender == idToFile[_id].owner,
-            "You are not the owner of this file"
-        );
-        _;
-    }
     modifier userExists() {
         require(addressToUser[msg.sender].exists, "User Does not exist");
         _;
@@ -41,6 +31,8 @@ contract Pixie is ERC1155 {
 
     mapping(uint256 => File) private idToFile;
     mapping(address => User) private addressToUser;
+
+    event fileCreated(uint256 indexed fileId);
 
     constructor() payable ERC1155("") {
         owner = payable(msg.sender);
@@ -55,8 +47,7 @@ contract Pixie is ERC1155 {
 
         idToFile[id] = tempFile;
         addressToUser[msg.sender].myFiles.push(id);
-
-        console.log("new item id ", id);
+        emit fileCreated(id);
 
         // emit event - get transaction - add event - use etherjs - subscribe to a topic
     }
@@ -92,9 +83,5 @@ contract Pixie is ERC1155 {
 
     function getFile(uint256 _id) public view returns (File memory) {
         return idToFile[_id];
-    }
-
-    function getCurrentFileId() public view returns (uint256) {
-        return fileId.current();
     }
 }

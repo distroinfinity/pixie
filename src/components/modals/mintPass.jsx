@@ -125,7 +125,7 @@ function MintPass({ file, tokensExist, setTokensExist }) {
         chain: "Mumbai",
         method: "balanceOf",
         standardContractType: "ERC1155",
-        contractAddress: "0x7A817D959DB2307fdb82dbB3B3f4bf8925D5d6C7",
+        contractAddress: PixieAddress,
         returnValueTest: { comparator: ">=", value: "1" },
         parameters: [":userAddress", tokenId],
       },
@@ -159,13 +159,13 @@ function MintPass({ file, tokensExist, setTokensExist }) {
   function getAccessToken() {
     // If you're just testing, you can paste in a token
     // and uncomment the following line:
-    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDlhMTRCMDdEOTM5NDQwYWM1N0Y0NEVGOTAyQzBENjc5OEQ1NTNmRUUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2Nzg2ODcwNDU2OTgsIm5hbWUiOiJwaXhpZSJ9.zzdmifJ-Mk4wo3bMsu2VQwe79mKIKWAXepb8nivhOCU";
+    // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDlhMTRCMDdEOTM5NDQwYWM1N0Y0NEVGOTAyQzBENjc5OEQ1NTNmRUUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2Nzg2ODcwNDU2OTgsIm5hbWUiOiJwaXhpZSJ9.zzdmifJ-Mk4wo3bMsu2VQwe79mKIKWAXepb8nivhOCU";
 
     // In a real app, it's better to read an access token from an
     // environement variable or other configuration that's kept outside of
     // your code base. For this to work, you need to set the
     // WEB3STORAGE_TOKEN environment variable before you run your code.
-    // return process.env.WEB3STORAGE_TOKEN;
+    return process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN;
   }
   function makeStorageClient() {
     return new Web3Storage({ token: getAccessToken() });

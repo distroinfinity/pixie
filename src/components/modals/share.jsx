@@ -19,10 +19,9 @@ import { ethers } from "ethers";
 
 import { useDisclosure } from "@chakra-ui/react";
 import { HiShare } from "react-icons/hi";
-
 const db = new Polybase({
   defaultNamespace:
-    "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
+    "pk/0xc8d8ca343f4873ad9d2500bc1cc6ad9b894a581c1e40183c7fff391a4c0e3e3512decaf6525c99bbac2ced536e2d7f1c51ac9957b3b9d27dafbfb2158a4dd06e/pixie-deploy",
 });
 
 function Share({ fileid, cid }) {
@@ -97,19 +96,19 @@ function Share({ fileid, cid }) {
     try {
       // check is user exists in db
       user = await db.collection("User").record(shareTo).get();
-      // console.log("User Already exists", user);
+      console.log("User Already exists", user);
     } catch (e) {
       // .create() accepts two params, address and name of user
       // populate these dynamically with address and name of user
       user = await db.collection("User").create([shareTo, "Yash-TestName"]);
-      // console.log("User created", user);
+      console.log("User created", user);
     }
 
     const recordData = await db
       .collection("User")
       .record(shareTo)
       .call("shared", [fileid]);
-    // console.log("added fileis to specific userSharedwith table", recordData);
+    console.log("added fileis to specific userSharedwith table", recordData);
     // console.log("fileshared successfully");
     setSharing(false);
     onClose(true);
