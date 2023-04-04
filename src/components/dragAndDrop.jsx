@@ -62,10 +62,7 @@ function DragAndDrop({ onFileSelect, setCaptureEvent, captureEvent }) {
         inputFileRef.current.click();
       }}
     >
-      <img
-        src={imageSrc ? imageSrc : "./images/pixie.png"}
-        alt="Selected file"
-      />
+      <img src={imageSrc ? imageSrc : "/pixie.png"} alt="Selected file" />
 
       <input
         type="file"

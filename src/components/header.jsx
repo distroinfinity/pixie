@@ -66,7 +66,7 @@ function Header({ setFiles }) {
             <Flex alignItems={"center"}>
               <AddFile setFiles={setFiles} />
 
-              <Menu>
+              {/* <Menu>
                 <MenuButton
                   as={Button}
                   rounded={"full"}
@@ -87,7 +87,7 @@ function Header({ setFiles }) {
                   <MenuDivider />
                   <MenuItem>Link 3</MenuItem>
                 </MenuList>
-              </Menu>
+              </Menu> */}
             </Flex>
           ) : (
             <Button

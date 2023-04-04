@@ -1,4 +1,12 @@
-import { Box, Divider, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  HStack,
+  Image,
+  Text,
+  VStack,
+  Link,
+} from "@chakra-ui/react";
 
 const Footer = () => {
   return (
@@ -11,10 +19,12 @@ const Footer = () => {
         <Text fontSize="sm" color="gray.500">
           by Manu XD
         </Text>
-        <Image
-          boxSize="15px"
-          src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
-        ></Image>
+        <Link href="https://github.com/distroinfinity/pixie" isExternal>
+          <Image
+            boxSize="15px"
+            src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
+          ></Image>
+        </Link>
       </HStack>
     </VStack>
   );

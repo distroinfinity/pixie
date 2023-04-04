@@ -19,13 +19,15 @@ import { useDisclosure } from "@chakra-ui/react";
 import { HiShare } from "react-icons/hi";
 
 const db = new Polybase({
-  defaultNamespace: "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
+  defaultNamespace:
+    "pk/0x326b3a6fb1871737ec1f73662e3b3f51e797010027f66fc840a6b4dfe2de4d1511bf14c0e1b64b878886be17ba3a855b0dbdf2cd1d3962b6ebb7c25beb124e6b/pixie3",
 });
 
 function Share({ fileid, cid }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [address, setAddress] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   function isValidEthereumAddress(address) {
     if (/^(0x)?[0-9a-f]{40}$/i.test(address)) {
@@ -58,11 +60,12 @@ function Share({ fileid, cid }) {
       return;
     }
     shareTo = shareTo.toLowerCase();
+    setSharing(true);
+
     // Then get auth message and sign
     // Note: message should be signed by owner of file.
     const { publicKey, signedMessage } = await signAuthMessage();
-    console.log("shareTo", shareTo, cid, fileid, publicKey, signedMessage);
-
+    // console.log("shareTo", shareTo, cid, fileid, publicKey, signedMessage);
     try {
       const res = await lighthouse.shareFile(
         publicKey,
@@ -71,7 +74,7 @@ function Share({ fileid, cid }) {
         signedMessage
       );
 
-      console.log(res);
+      // console.log(res);
     } catch (error) {
       console.log("Error while sharing access", error);
     }
@@ -90,27 +93,28 @@ function Share({ fileid, cid }) {
     try {
       // check is user exists in db
       user = await db.collection("User").record(shareTo).get();
-      console.log("User Already exists", user);
+      // console.log("User Already exists", user);
     } catch (e) {
       // .create() accepts two params, address and name of user
       // populate these dynamically with address and name of user
       user = await db.collection("User").create([shareTo, "Yash-TestName"]);
-      console.log("User created", user);
+      // console.log("User created", user);
     }
 
     const recordData = await db
       .collection("User")
       .record(shareTo)
       .call("shared", [fileid]);
-    console.log("added fileis to specific userSharedwith table", recordData);
-    console.log("fileshared successfully");
+    // console.log("added fileis to specific userSharedwith table", recordData);
+    // console.log("fileshared successfully");
+    setSharing(false);
     onClose(true);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Do something with the valid Ethereum address
-    console.log("entered address", address);
+    // console.log("entered address", address);
     shareFile(address);
   };
 
@@ -144,6 +148,8 @@ function Share({ fileid, cid }) {
               colorScheme="blue"
               mr={3}
               onClick={handleSubmit}
+              isLoading={sharing}
+              loadingText="Sharing..."
             >
               Share
             </Button>

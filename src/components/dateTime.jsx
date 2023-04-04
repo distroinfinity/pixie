@@ -1,5 +1,5 @@
 import React from "react";
-import { HStack, Text } from "@chakra-ui/react";
+import { HStack, Text, Skeleton } from "@chakra-ui/react";
 function TimestampDisplay({ timestamp }) {
   const date = new Date(timestamp);
   const dateString = date.toLocaleDateString(); // format date as string
@@ -8,9 +8,11 @@ function TimestampDisplay({ timestamp }) {
   return (
     <HStack justifyContent="space-between">
       <Text>Uploaded at:</Text>{" "}
-      <Text>
-        {dateString} {timeString}
-      </Text>
+      <Skeleton isLoaded={dateString && timeString}>
+        <Text>
+          {dateString} {timeString}
+        </Text>
+      </Skeleton>
     </HStack>
   );
 }

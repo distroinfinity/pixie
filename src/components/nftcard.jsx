@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Text, Box, Image, Flex, Link, HStack, VStack } from "@chakra-ui/react";
+import {
+  Text,
+  Box,
+  Image,
+  Flex,
+  Link,
+  HStack,
+  VStack,
+  Skeleton,
+} from "@chakra-ui/react";
 import { ethers } from "ethers";
 
 import { PixieAddress } from "../../hardhat/config";
@@ -27,7 +36,14 @@ function NFTCard({ tokenId }) {
 
   return (
     <VStack borderWidth="1px" borderRadius="lg" overflow="hidden">
-      <Image src={tokenUri} alt="Token Image" boxSize="60%" />
+      <Skeleton isLoaded={tokenUri}>
+        <Image
+          src={tokenUri}
+          alt="Token Image"
+          boxSize="60%"
+          marginLeft="20%"
+        />
+      </Skeleton>
       <Box p="6">
         <Flex justifyContent="space-between">
           <Text fontWeight="bold">Contract:</Text>
@@ -46,10 +62,6 @@ function NFTCard({ tokenId }) {
           <Text fontWeight="bold">Token ID:</Text>
           <Text>{tokenId}</Text>
         </Flex>
-        {/* <Flex justifyContent="space-between">
-          <Text fontWeight="bold">Balance:</Text>
-          <Text>{balance}</Text>
-        </Flex> */}
       </Box>
     </VStack>
   );

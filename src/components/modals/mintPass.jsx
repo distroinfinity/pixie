@@ -22,7 +22,7 @@ import lighthouse from "@lighthouse-web3/sdk";
 import { PixieAddress } from "../../../hardhat/config";
 import Pixie from "./../../../hardhat/artifacts/contracts/Pixie.sol/Pixie.json";
 
-function MintPass({ file, tokensExist }) {
+function MintPass({ file, tokensExist, setTokensExist }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [numPasses, setNumPasses] = useState(0);
@@ -98,6 +98,7 @@ function MintPass({ file, tokensExist }) {
     }
     setMinting(false);
     onClose(true);
+    setTokensExist(true);
   };
   const encryptionSignature = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);

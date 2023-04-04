@@ -26,7 +26,7 @@ export default function Home() {
 
   async function signIn() {
     setSigningIn(true);
-    const authState = await auth.signIn();
+    const authState = await auth.signIn({ force: true });
     let publicKey = authState.userId;
 
     if (!publicKey) {
@@ -104,7 +104,10 @@ export default function Home() {
             </Text>
             {user ? (
               <HStack alignItems="baseline">
-                <Text fontSize={"34px"}> gm,</Text>
+                <Text fontSize={"32px"} marginLeft="50px">
+                  {" "}
+                  gm,
+                </Text>
                 <Box
                   rounded="md"
                   textAlign="center"

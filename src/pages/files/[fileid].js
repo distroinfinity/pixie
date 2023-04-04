@@ -10,6 +10,10 @@ import {
   HStack,
   Link,
   Button,
+  Skeleton,
+  Alert,
+  AlertIcon,
+  CloseButton,
 } from "@chakra-ui/react";
 import Layout from "@/components/layout";
 import MintPass from "@/components/modals/mintPass";
@@ -38,7 +42,7 @@ function ImagePage({}) {
   const router = useRouter();
 
   const { user, setUser } = useContext(User_data);
-
+  const [showAlert, setShowAlert] = useState(false);
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(null);
   const [locked, setLocked] = useState(true);
@@ -97,23 +101,25 @@ function ImagePage({}) {
   const decrypt = async (cid) => {
     if (!cid) return;
     setUnlocking(true);
-    // Fetch file encryption key
-    const { publicKey, signedMessage } = await sign_auth_message();
-    /*
+
+    try {
+      // Fetch file encryption key
+      const { publicKey, signedMessage } = await sign_auth_message();
+      /*
       fetchEncryptionKey(cid, publicKey, signedMessage)
         Parameters:
           CID: CID of the file to decrypt
           publicKey: public key of the user who has access to file or owner
           signedMessage: message signed by the owner of publicKey
     */
-    const keyObject = await lighthouse.fetchEncryptionKey(
-      cid,
-      publicKey,
-      signedMessage
-    );
+      const keyObject = await lighthouse.fetchEncryptionKey(
+        cid,
+        publicKey,
+        signedMessage
+      );
 
-    // Decrypt file
-    /*
+      // Decrypt file
+      /*
       decryptFile(cid, key, mimeType)
         Parameters:
           CID: CID of the file to decrypt
@@ -121,22 +127,26 @@ function ImagePage({}) {
           mimeType: default null, mime type of file
     */
 
-    const fileType = "image/jpeg";
-    const decrypted = await lighthouse.decryptFile(
-      cid,
-      keyObject.data.key,
-      fileType
-    );
-    // console.log(decrypted);
-    /*
-      Response: blob
-    */
+      const fileType = "image/jpeg";
+      const decrypted = await lighthouse.decryptFile(
+        cid,
+        keyObject.data.key,
+        fileType
+      );
+      // console.log(decrypted);
+      /*
+        Response: blob
+      */
 
-    // View File
-    const url = URL.createObjectURL(decrypted);
-    setFileURL(url);
+      // View File
+      const url = URL.createObjectURL(decrypted);
+      setFileURL(url);
+      setLocked(false);
+    } catch (error) {
+      setShowAlert(true);
+      console.log("error while unlocking", error);
+    }
     setUnlocking(false);
-    setLocked(false);
   };
 
   async function unlock() {
@@ -161,6 +171,20 @@ function ImagePage({}) {
                 src={fileURL ? fileURL : "/images/locked.png"}
                 alt="locked"
               />
+              {showAlert && (
+                <Alert status="error">
+                  <AlertIcon />
+                  You are not authorized to access this file.
+                  <CloseButton
+                    position="absolute"
+                    right="8px"
+                    top="8px"
+                    onClick={() => {
+                      setShowAlert(false);
+                    }}
+                  />
+                </Alert>
+              )}
             </Box>
             <Button
               isLoading={unlocking}
@@ -201,32 +225,41 @@ function ImagePage({}) {
                 <Text fontSize="md" mb={2}>
                   Owner:
                 </Text>
-                <Link
-                  href={`https://etherscan.io/address/${PixieAddress}`}
-                  isExternal
-                  color="teal.500"
-                >
-                  {file?.owner.substring(0, 5)}.....
-                  {file?.owner.substring(
-                    file?.owner.length - 6,
-                    file?.owner.length
-                  )}
-                </Link>
+                <Skeleton isLoaded={file}>
+                  <Link
+                    href={`https://etherscan.io/address/${PixieAddress}`}
+                    isExternal
+                    color="teal.500"
+                  >
+                    {file?.owner.substring(0, 5)}.....
+                    {file?.owner.substring(
+                      file?.owner.length - 6,
+                      file?.owner.length
+                    )}
+                  </Link>
+                </Skeleton>
               </HStack>
               <HStack justifyContent="space-between">
                 <Text fontSize="md" mb={2}>
                   OnChainId:
                 </Text>
-                <Text>{file?.id}</Text>
+                <Skeleton isLoaded={file}>
+                  <Text>{file?.id}</Text>
+                </Skeleton>
               </HStack>
               <HStack justifyContent="space-between" alignItems="baseline">
                 <Text fontSize="md" mb={2}>
                   CID:
                 </Text>
-                <Text>
-                  {file?.cid.substring(0, 5)}....
-                  {file?.cid.substring(file?.cid.length - 6, file?.cid.length)}
-                </Text>
+                <Skeleton isLoaded={file}>
+                  <Text>
+                    {file?.cid.substring(0, 5)}....
+                    {file?.cid.substring(
+                      file?.cid.length - 6,
+                      file?.cid.length
+                    )}
+                  </Text>
+                </Skeleton>
               </HStack>
             </Box>
             <VStack bg="gray.100" rounded="md" p="20px" boxSize="100%">
@@ -240,7 +273,11 @@ function ImagePage({}) {
               <HStack p="10px" justifyContent="center">
                 {/* file={file} tokensExist={tokensExist} */}
                 {file?.owner == user?.id ? (
-                  <MintPass file={file} tokensExist={tokensExist} />
+                  <MintPass
+                    file={file}
+                    tokensExist={tokensExist}
+                    setTokensExist={setTokensExist}
+                  />
                 ) : (
                   ""
                 )}
