@@ -10,6 +10,8 @@ import {
   ModalFooter,
   Text,
   Input,
+  useClipboard,
+  useToast,
 } from "@chakra-ui/react";
 import lighthouse from "@lighthouse-web3/sdk";
 import { Polybase } from "@polybase/client";
@@ -28,6 +30,8 @@ function Share({ fileid, cid }) {
   const [address, setAddress] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const { hasCopied, onCopy } = useClipboard(`files/${fileid}`);
+  const toast = useToast();
 
   function isValidEthereumAddress(address) {
     if (/^(0x)?[0-9a-f]{40}$/i.test(address)) {
@@ -117,6 +121,15 @@ function Share({ fileid, cid }) {
     // console.log("entered address", address);
     shareFile(address);
   };
+  const handleCopyClick = () => {
+    onCopy();
+    toast({
+      title: "Link copied",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   return (
     <>
@@ -127,7 +140,7 @@ function Share({ fileid, cid }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Share Access</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text m="10px">
@@ -152,6 +165,9 @@ function Share({ fileid, cid }) {
               loadingText="Sharing..."
             >
               Share
+            </Button>
+            <Button onClick={handleCopyClick}>
+              {hasCopied ? "Copied!" : "Copy Link"}
             </Button>
             {/* <Button variant='ghost'>Secondary Action</Button> */}
           </ModalFooter>

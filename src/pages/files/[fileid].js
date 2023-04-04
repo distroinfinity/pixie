@@ -308,10 +308,8 @@ function ImagePage({}) {
           {file?.sharedWith?.length == 0 ? "Not Shared with anybody yet" : ""}
 
           <UnorderedList>
-            {file?.sharedWith?.map((viewer) => (
-              <ListItem key={viewer.email}>
-                {viewer.name} ({viewer.email})
-              </ListItem>
+            {file?.sharedWith?.map((item, index) => (
+              <ListItem key={index}>{item}</ListItem>
             ))}
           </UnorderedList>
         </Box>
