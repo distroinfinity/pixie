@@ -29,7 +29,7 @@ function Share({ fileid, cid }) {
   const [address, setAddress] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [sharing, setSharing] = useState(false);
-  const { hasCopied, onCopy } = useClipboard(`http://localhost:3000/files/${fileid}`);
+  const { hasCopied, onCopy } = useClipboard(`https://pixie-ashy.vercel.app/files/${fileid}`); 
   const toast = useToast();
 
   function isValidEthereumAddress(address) {
