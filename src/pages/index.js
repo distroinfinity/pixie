@@ -25,7 +25,7 @@ export default function Home() {
 
   async function signIn() {
     setSigningIn(true);
-    const authState = await auth.signIn({ force: true });
+    const authState = await auth.signIn(); //{ force: true }
     let publicKey = authState.userId;
 
     if (!publicKey) {
